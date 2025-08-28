@@ -1,51 +1,67 @@
 # Scrabble Terminal Game
 
-A simple Scrabble game for the terminal.
+A Python-based Scrabble game that runs in the terminal with PostgreSQL database integration for game state persistence.
+
+## Team Members
+
+This project was developed as a collaborative effort with the following team members and their responsibilities:
+
+- **Jayden Petee** - Game board, tile bag, rack system and turn loop implementation
+- **Lincoln Ngugi** - Letter scoring system and score calculations
+- **Paul Kimani** - Game rules validation, word placement and connectivity checks
+- **Jerry Omweno** - CLI/UX interface, input/output handling and project packaging
+- **Natasha** - Database design and implementation
+
+## Setup Instructions
+
+1. Install dependencies:
+```bash
+pipenv install
+```
+
+2. Activate the virtual environment:
+```bash
+pipenv shell
+```
+
+3. Set up your PostgreSQL database and update the `.env` file with your database credentials.
+
+4. Run the game:
+```bash
+python main.py
+```
+
+## Game Features
+
+- **Player Registration**: Create account with username, country, and password
+- **Game Persistence**: Save and load game states using PostgreSQL database
+- **Human vs Computer**: Play against a computer opponent
+- **Word Validation**: Built-in dictionary for word verification
+- **Scoring System**: Standard Scrabble scoring with multiplier tiles
+- **Interactive Board**: 15x15 game board with special multiplier squares
+- **Rack Management**: 7-tile rack with automatic refilling
 
 ## How to Play
 
-Run the game:
+1. Enter your username and password (or create new account)
+2. Choose to play against computer or solo
+3. View your tile rack and the game board
+4. Enter words with row, column, and direction (H/V)
+5. Game automatically validates placement and calculates scores
+6. Continue until maximum turns reached or no valid moves available
 
-```bash
-python -m scrabble
-```
+## Game Commands
 
-## Commands
+- Enter a word to play it on the board
+- Type `quit` or `exit` to save and exit the game
+- Type `reset` to get new tiles in your rack
+- Follow prompts for word placement (row, column, direction)
 
-- `BOARD` - Show the game board
-- `RACK` - Show your tiles
-- `PLAY row col direction word` - Place a word
-  - Example: `PLAY 7 7 H HELLO`
-- `EXCHANGE letters` - Exchange tiles
-  - Example: `EXCHANGE ABC`
-- `PASS` - Skip your turn
-- `SAVE filename` - Save game
-- `LOAD filename` - Load game
-- `HELP` - Show help
-- `QUIT` - Exit game
+## Technical Details
 
-## Example Game
-
-```
-Player 1's turn > RACK
-Player 1's tiles: A B C D E F G
-Score: 0
-
-Player 1's turn > PLAY 7 7 H HELLO
-Placing word HELLO...
-
-Player 1's turn > BOARD
-=== GAME BOARD ===
-[Board will show here]
-```
-
-## Team Project
-
-This CLI is part of a team project. Other components:
-
-- Board and game logic (P2)
-- Rules validation (P3)
-- Scoring system (P4)
-- Project integration (P1)
+- **Language**: Python 3.8+
+- **Database**: PostgreSQL with SQLAlchemy ORM
+- **Dependencies**: psycopg, sqlalchemy, alembic, python-dotenv
+- **Architecture**: Modular design with separate components for game logic, board, scoring, and database operations
 
 
