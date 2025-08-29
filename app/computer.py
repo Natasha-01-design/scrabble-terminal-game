@@ -1,5 +1,6 @@
 import itertools
 from .scoring import score_word
+from rich import print
 #from .game import end_game
 
 class Computer:
@@ -58,10 +59,10 @@ class Computer:
         if best_move:
             word, placement = best_move
             self.game.board.place_word(word, placement["row"], placement["col"], placement["direction"])
-            print(f"Computer played: {word} at ({placement['row']},{placement['col']}) {placement['direction']}, Score: {best_score}")
+            print(f"[red]Computer played: {word} at ({placement['row']},{placement['col']}) {placement['direction']}, Score: {best_score}[/red]")
             return word, placement, best_score
         else:
-            print("Computer cannot make a move")
+            print(f"[red]Computer cannot make a move[/red]")
             self.game.end_game()   
             return None, None, 0
 

@@ -57,7 +57,7 @@ class Dictionary:
         "YOUR"
     }
 
-    def is_valid(self, word: str) -> bool:
+    def is_valid(self, word):
         
         #Check if a word exists in the dictionary.
 

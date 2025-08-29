@@ -9,6 +9,7 @@ from .computer import Computer
 from .logger import logger
 import random
 import copy
+from rich import print
 
 class ScrabbleGame:
     def __init__(self):
@@ -36,10 +37,10 @@ class ScrabbleGame:
         while True:
             value = input(prompt).strip()
             if not value:
-                print("Input cannot be empty. Try again.")
+                print(f"[yellow]Input cannot be empty. Try again.[/yellow]")
                 continue
             if not value.replace(" ", "").isalpha():  # allows names like "John Doe"
-                print("Only alphabetic characters are allowed. Try again!")
+                print(f"[yellow]Only alphabetic characters are allowed. Try again![/yellow]")
                 continue
             return value.title()
 
@@ -47,10 +48,10 @@ class ScrabbleGame:
         while True:
             password = input(prompt).strip()
             if not password.isdigit():
-                print("Password must contain only digits (0-9). Try again!")
+                print(f"[yellow]Password must contain only digits (0-9). Try again![/yellow]")
                 continue
             if len(password) < 4:
-                print("Password must be at least 4 digits long. Try again!")
+                print(f"[yellow]Password must be at least 4 digits long. Try again![/yellow]")
                 continue
             return password
 
@@ -71,13 +72,13 @@ class ScrabbleGame:
             while attempts > 0:
                 password = input(f"Enter your password ({attempts} attempts remaining): ")
                 if player.password == password:
-                    print("Login successful.")
+                    print(f"[blue]Login successful.[/blue]")
                     break
                 else:
                     attempts -= 1
-                    print("Incorrect password.")
+                    print(f"[blue]Incorrect password.[/blue]")
             else:
-                print("Too many failed attempts. CONTACT PAUL......Exiting game.....")
+                print(f"[blue]Too many failed attempts. CONTACT PAUL......Exiting game.....[/blue]")
                 exit(1)
 
         self.player = player
@@ -127,7 +128,7 @@ class ScrabbleGame:
         if is_computer and self.computer_player:
             # Check if the computer can make a valid move
             if not self.can_form_any_valid_word(self.computer_rack):
-                print("Computer cannot make a move. The game is over.")
+                print(f"[red]Computer cannot make a move. The game is over.[/red]")
                 self.end_game()  # End the game if the computer can't make a move
                 return
 
@@ -135,7 +136,7 @@ class ScrabbleGame:
             if word:
                 self.computer_score += score
                 self.played_words.add(word)
-                print(f"Computer scored: {score} | Total: {self.computer_score}")
+                print(f"[blue]Computer scored: {score} The Total is: {self.computer_score}[/blue]")
                 # Refill computer rack
                 tiles_needed = 7 - len(self.computer_rack)
                 self.computer_rack.extend(self.draw_tiles(tiles_needed))
@@ -144,69 +145,69 @@ class ScrabbleGame:
         # Human turn
         while True:
             # Show the player's current rack
-            print(f"Your current rack contains the following letters: {', '.join(player_rack)}")
+            print(f"[blue]Your current rack contains the following letters: {', '.join(player_rack)}[/blue]")
 
             # Check if any valid word can be formed with the current rack
             if not self.can_form_any_valid_word(player_rack):
                 reset_choice = input("No valid word can be formed with your current rack. Would you like to reset it? (y/n): ").strip().lower()
                 if reset_choice == "y":
                     self.reset_rack(player_rack)
-                    print("Your rack has been reset with new tiles.")
+                    print(f"[yellow]Your rack has been reset with new tiles.[/yellow]")
                     continue
                 else:
-                    print("You chose not to reset the rack. Try entering a valid word.")
+                    print(f"[yellow]You chose not to reset the rack. Try entering a valid word.[/yellow]")
                     continue
-            word = input("Enter word to play (or type 'quit'  exit or 'reset' to reset your rack): ").strip()
+            word = input("Enter word to play (or type quit or exit to end game or 'reset' to reset your rack): ").strip()
 
             if word.lower() in ("quit", "exit"):
-                print("Exiting game...")
+                print(f"[red]Exiting game...[/red]")
                 self.save_game()
-                print("You have successfully exited. See you next time!")
+                print(f"[blue]You have successfully exited. See you next time![/blue]")
                 exit(0)
 
             if word.lower() == "reset":
                 reset_confirmation = input("Are you sure you want to reset your rack? (y/n): ").strip().lower()
                 if reset_confirmation == 'y':
-                    print("Your rack has been reset.")
+                    print(f"[yellow]Your rack has been reset.[/yellow]")
                     self.reset_rack(player_rack)  # Reset the rack
                     break  # Exit the turn loop to allow the player to draw new tiles
                 else:
-                    print("Rack reset canceled. Continuing with your turn.")
+                    print(f"[yellow]Rack reset canceled. Continuing with your turn.[/yellow]")
                     continue
 
             if not word:
-                print("No word entered. Try again.")
+                print(f"[red]No word entered. Try again.[/red]")
                 continue
 
             word = word.upper()
 
             # Check if the word can be formed from player's rack
             if not self.can_form_word_from_rack(word, player_rack):
-                print(f"You don't have the necessary tiles to form '{word}'. Try another word.")
+                print(f"[red]You don't have the necessary tiles to form '{word}'. Try another word.[/red]")
                 continue
             # Check if word was already played
             if word in self.played_words:
-                print(f"The word '{word}' has already been played. Try another word.")
+                print(f"[red]The word '{word}' has already been played. Try another word.[/red]")
                 continue
             if not self.dictionary.is_valid(word):
-                print("Invalid word. Try again.")
+                print(f"[red]Invalid word. Try again.[/red]")
                 continue
 
             try:
                 row = int(input("Row (0-14): "))
                 col = int(input("Col (0-14): "))
             except ValueError:
-                print("Invalid row/column input. Please enter numbers.")
+                print(f"[red]Invalid row/column input. Please enter numbers.[/red]")
                 continue
 
             direction = input("Direction (H/V): ").strip().upper()
             if direction not in ("H", "V"):
-                print("Invalid direction. Please enter 'H' or 'V'.")
+                print(f"[red]Invalid direction. Please enter 'H' or 'V'.[/red]")
                 continue
 
             placement = self.board.place_word(word, row, col, direction, dry_run=True)
             if not placement:
-                print("Invalid word placement. Try again.")
+                print(f"[red]Invalid word placement. Try again.[/red]")
                 continue
 
             score = score_word(word, placement)
@@ -215,7 +216,7 @@ class ScrabbleGame:
                 self.board.place_word(word, row, col, direction)  # Final placement
                 self.played_words.add(word) 
                 self.human_score += score
-                print(f"You scored: {score} | Total: {self.human_score}")
+                print(f"[blue]You scored: {score} Your Total is: {self.human_score}[/blue]")
 
                 # Remove letters from player's rack
                 self.remove_letters_from_rack(word, player_rack)
@@ -237,12 +238,12 @@ class ScrabbleGame:
         self.session.refresh(self.game_record)
 
     def start_game(self):
-        #Main game loop with turn tracking and database refresh
+        
         while True:
             self.session.refresh(self.game_record)
 
-            print(f"\n[TURN] {'Human' if self.game_record.is_player_turn else 'Computer'}'s turn.")
-            print(f"Scores for Human: {self.human_score} for Computer: {self.computer_score}")
+            print(f"[red]\n[TURN] {'Human' if self.game_record.is_player_turn else 'Computer'}'s turn.[/red]")
+            print(f"[red]Scores for Human: {self.human_score} Scores for Computer: {self.computer_score}[/red]")
 
             if self.computer_player:
                 if self.game_record.is_player_turn:
@@ -259,7 +260,7 @@ class ScrabbleGame:
 
             proceed = input("Continue game? (y/n): ").lower()
             if proceed != "y":
-                print("Game saved. Goodbye!")
+                print(f"[blue]Game saved. Goodbye![/blue]")
                 break
 
             # End game after 4 turns
@@ -268,26 +269,26 @@ class ScrabbleGame:
                 break
 
     def end_game(self):
-        #End the game, announce the winner and loser, and capture the winner's name without saving it to the database.
-        print("\nGame Over!")
+        #End the game, announce the winner and loser, and capture the winner's name 
+        print(f"[blue]\nGame Over![/blue]")
 
         # Determine the winner and loser, then print messages accordingly
         if self.human_score > self.computer_score:
             winner = self.player.username  # Human player wins
             loser = "Computer"  # Computer loses
-            print(f"Congratulations, {winner}! You win! Final score: {self.human_score} - {self.computer_score}")
-            print(f"Computer loses! Final score: {self.computer_score} - {self.human_score}")
+            print(f"[blue]Congratulations, {winner}! You win! Final score: {self.human_score} against {self.computer_score}[/blue]")
+            print(f"[blue]Computer loses! Final score: {self.computer_score} against {self.human_score}[/blue]")
         elif self.human_score < self.computer_score:
             winner = "Computer"  # Computer wins
             loser = self.player.username  # Human player loses
-            print(f"Computer wins! Final score: {self.computer_score} - {self.human_score}")
-            print(f"{self.player.username} loses! Final score: {self.human_score} - {self.computer_score}")
+            print(f"[blue]Computer wins! Final score: {self.computer_score} against {self.human_score}[/blue]")
+            print(f"[blue]{self.player.username} loses! Final score: {self.human_score} against {self.computer_score}[/blue]")
         else:
-            winner = "None"  # It's a draw
-            loser = "None"  # No loser in case of a draw
-            print(f"It's a draw! Final score: {self.human_score} - {self.computer_score}")
+            winner = "None"  # draw
+            loser = "None"  #  draw
+            print(f"[blue]It's a draw! Final score: {self.human_score} and {self.computer_score}[/blue]")
 
-        print("Game over. Thank you for playing!")
+        print(f"[blue]Game over. Thank you for playing![/blue]")
         return winner, loser
 
 
@@ -317,6 +318,6 @@ class ScrabbleGame:
     def reset_rack(self, player_rack):
         #Reset the player's rack by drawing new tiles from the tile bag.
         player_rack.clear()  # Clear the current rack
-        new_tiles = self.draw_tiles(7)  # Draw 7 new tiles from the tile bag
+        new_tiles = self.draw_tiles(7)  
         player_rack.extend(new_tiles)  # Add the new tiles to the rack
-        print(f"New rack: {', '.join(player_rack)}")  # Show the new rack to the player
+        print(f"[blue]New rack: {', '.join(player_rack)}[/blue]")  # Show the new rack to the player
